@@ -93,7 +93,7 @@
     if (key === 'leave-balance') {
       const lb = d.leaveBalance || {};
       sectionBody.innerHTML = `<table class="tbl">
-          <tr><th>Casual (CL)</th><th>Privilege (PL)</th><th>Sick (SL)</th><th>Updated</th></tr>
+          <tr><th>Last Year EL</th><th>Total EL This year</th><th>Total CL</th><th>Taken CL</th><th>Taken EL</th><th>Balance CL</th><th>Balance EL</th></tr>
           <tr><td>${lb.CL ?? '-'}</td><td>${lb.PL ?? '-'}</td><td>${lb.SL ?? '-'}</td><td>${lb.UpdatedAt ?? '-'}</td></tr>
         </table>`;
     } else if (key === 'attendance') {
