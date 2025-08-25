@@ -94,7 +94,7 @@
       const lb = d.leaveBalance || {};
       sectionBody.innerHTML = `<table class="tbl">
           <tr><th>Last Year EL</th><th>Total EL This year</th><th>Total CL</th><th>Taken CL</th><th>Taken EL</th><th>Balance CL</th><th>Balance EL</th></tr>
-          <tr><td>${lb.CL ?? '-'}</td><td>${lb.PL ?? '-'}</td><td>${lb.SL ?? '-'}</td><td>${lb.UpdatedAt ?? '-'}</td></tr>
+          <tr>   <td>${lb.LastYearEL ?? '-'}</td>  <td>${lb.TotalEL ?? '-'}</td>  <td>${lb.TotalCL ?? '-'}</td> <td>${lb.TakenCL ?? '-'}</td> <td>${lb.TakenEL ?? '-'}</td>  <td>${lb.BalanceCL ?? '-'}</td> <td>${lb.BalanceEL ?? '-'}</td></tr>
         </table>`;
     } else if (key === 'attendance') {
       const rows = d.attendance || [];
