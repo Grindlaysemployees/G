@@ -1,5 +1,5 @@
 // ====== CONFIG ======
-const API_URL = 'https://script.google.com/macros/s/AKfycbz8Gc9RjgmwZY3t6Mx-kfxANuIA2SHg5HtPFd5Pn67LhAM556Effl-ZkNnlr9MF9JpMiw/exec'; // e.g. https://script.google.com/macros/s/AKfycbx.../exec
+const API_URL = 'https://script.google.com/macros/s/AKfycbwR2YafBYMrWlZwklwRc8n39-8DtGD8ojihIwC70v9sbPyYX5wqc6Uf0FeVMgAPu4AHeQ/exec'; // e.g. https://script.google.com/macros/s/AKfycbx.../exec
 
 async function api(action, data = {}) {
   const body = new URLSearchParams({ action, ...data });
