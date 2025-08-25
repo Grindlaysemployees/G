@@ -103,7 +103,7 @@
         <tr><td>${r.Date||''}</td><td>${r.InTime||''}</td><td>${r.OutTime||''}</td><td>${r.Status||''}</td><td>${r.Remarks||''}</td></tr>
       `).join('');
       sectionBody.innerHTML = `<table class="tbl">
-          <tr><th>Date</th><th>In</th><th>Out</th><th>Status</th><th>Remarks</th></tr>
+          <tr><th>Date</th><th>In</th><th>Out</th><th>Days</th><th>Month</th></tr>
           ${html || '<tr><td colspan="5" class="muted">No records</td></tr>'}
         </table>`;
     } else if (key === 'salary') {
