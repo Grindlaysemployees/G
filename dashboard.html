@@ -77,8 +77,54 @@
   </div>
 </div>
 
-<script src="app.js"></script>
 <script>
+  // ========= CONFIG =========
+  // Replace this with your deployed Google Apps Script Web App URL
+  const API_URL = 'YOUR_WEB_APP_URL_HERE'; // e.g., https://script.google.com/macros/s/AKfyc.../exec
+
+  // ========= SIMPLE API WRAPPER =========
+  async function api(params) {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+      body: new URLSearchParams(params).toString(),
+    });
+    if (!res.ok) throw new Error('Network error');
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Request failed');
+    return data;
+  }
+
+  // ========= AUTH / STORAGE =========
+  const getToken = () => localStorage.getItem('ep_token') || '';
+  const setName = (name) => localStorage.setItem('ep_name', name || '');
+  async function logout() {
+    try {
+      const token = getToken();
+      if (token) await api({ action: 'logout', token });
+    } catch (e) { /* ignore */ }
+    localStorage.removeItem('ep_token');
+    localStorage.removeItem('ep_name');
+    // Redirect to login (adjust path as per your setup)
+    location.replace('login.html');
+  }
+
+  // ========= API CALLS =========
+  async function fetchMe() {
+    const token = getToken();
+    const { data } = await api({ action: 'me', token });
+    return data;
+  }
+  async function applyLeave({ fromDate, toDate, type, reason }) {
+    const token = getToken();
+    return api({ action: 'applyleave', token, fromDate, toDate, type, reason });
+  }
+  async function submitComplaint({ subject, description }) {
+    const token = getToken();
+    return api({ action: 'submitcomplaint', token, subject, description });
+  }
+
+  // ========= UI / RENDER =========
   const sectionTitle = document.getElementById('sectionTitle');
   const sectionBody = document.getElementById('sectionBody');
 
@@ -87,48 +133,73 @@
   }
 
   function openSection(key) {
-    const titles = {'leave-balance':'Leave Balance','attendance':'Attendance','salary':'Salary Slips','documents':'Documents','complaints':'Complaints','bonus':'Bonus','leaves':'Leave Requests'};
+    const titles = {
+      'leave-balance':'Leave Balance',
+      'attendance':'Attendance',
+      'salary':'Salary Slips',
+      'documents':'Documents',
+      'complaints':'Complaints',
+      'bonus':'Bonus',
+      'leaves':'Leave Requests'
+    };
     sectionTitle.textContent = titles[key] || 'Details';
     const d = window.__DATA__; if (!d) return;
 
     if (key === 'leave-balance') {
       const lb = d.leaveBalance || {};
       sectionBody.innerHTML = `<table class="tbl">
-          <tr><th>Last Year EL</th><th>Total EL This year</th><th>Total CL</th><th>Taken CL</th><th>Taken EL</th><th>Balance CL</th><th>Balance EL</th></tr>
-          <tr>   <td>${lb.LastYearEL ?? '-'}</td>  <td>${lb.TotalEL ?? '-'}</td>  <td>${lb.TotalCL ?? '-'}</td> <td>${lb.TakenCL ?? '-'}</td> <td>${lb.TakenEL ?? '-'}</td>  <td>${lb.BalanceCL ?? '-'}</td> <td>${lb.BalanceEL ?? '-'}</td></tr>
+          <tr>
+            <th>Last Year EL</th><th>Total EL This year</th><th>Total CL</th>
+            <th>Taken CL</th><th>Taken EL</th><th>Balance CL</th><th>Balance EL</th>
+          </tr>
+          <tr>
+            <td>${lb['Last Year EL'] ?? '-'}</td>
+            <td>${lb['Total EL This year'] ?? '-'}</td>
+            <td>${lb['Total CL'] ?? '-'}</td>
+            <td>${lb['Taken CL'] ?? '-'}</td>
+            <td>${lb['Taken EL'] ?? '-'}</td>
+            <td>${lb['Balance CL'] ?? '-'}</td>
+            <td>${lb['Balance EL'] ?? '-'}</td>
+          </tr>
         </table>`;
     } else if (key === 'attendance') {
-      const rows = d.attendance || [];
-      const html = rows.slice(-32).reverse().map(r => `
+      const rows = (d.attendance || []).slice(-32).reverse();
+      const html = rows.map(r => `
         <tr><td>${r.Date||''}</td><td>${r.InTime||''}</td><td>${r.OutTime||''}</td><td>${r.Status||''}</td><td>${r.Remarks||''}</td></tr>
       `).join('');
       sectionBody.innerHTML = `<table class="tbl">
-          <tr><th>Date</th><th>In</th><th>Out</th><th>Days</th><th>Remarks</th></tr>
+          <tr><th>Date</th><th>In</th><th>Out</th><th>Status</th><th>Remarks</th></tr>
           ${html || '<tr><td colspan="5" class="muted">No records</td></tr>'}
         </table>`;
     } else if (key === 'salary') {
-      const rows = d.salarySlips || [];
-      const html = rows.reverse().map(r =>  `
-        <tr><td>${r.Month||''}-${r.Year||''}</td><td>${r.Gross||''}</td><td>${r.Deductions||''}</td><td>${r.Net||''}</td>
-        <td>${r.PDFUrl?`<a href="${r.PDFUrl}" target="_blank">View PDF</a>`:'-'}</td></tr>`).join('');
+      const rows = (d.salarySlips || []).slice().reverse();
+      const html = rows.map(r =>  `
+        <tr>
+          <td>${(r.Month||'')}-${(r.Year||'')}</td>
+          <td>${r.Gross||''}</td>
+          <td>${r.Deductions||''}</td>
+          <td>${r.Net||''}</td>
+          <td>${r.PDFUrl?`<a href="${r.PDFUrl}" target="_blank">View PDF</a>`:'-'}</td>
+        </tr>`).join('');
       sectionBody.innerHTML = `<table class="tbl">
-          <tr><th>Month</th><th>PDFUrl</th></tr>${html || '<tr><td colspan="2" class="muted">No salary slips</td></tr>'}
+          <tr><th>Month</th><th>Gross</th><th>Deductions</th><th>Net</th><th>PDF</th></tr>
+          ${html || '<tr><td colspan="5" class="muted">No salary slips</td></tr>'}
         </table>`;
     } else if (key === 'documents') {
       const rows = d.documents || [];
       const html = rows.map(r => `<tr><td>${r.Type||''}</td><td>${r.Name||''}</td><td>${r.FileUrl?`<a href="${r.FileUrl}" target="_blank">Open</a>`:'-'}</td></tr>`).join('');
       sectionBody.innerHTML = `<table class="tbl"><tr><th>Type</th><th>Name</th><th>Link</th></tr>${html || '<tr><td colspan="3" class="muted">No documents</td></tr>'}</table>`;
     } else if (key === 'complaints') {
-      const rows = d.complaints || [];
-      const html = rows.reverse().map(r => `<tr><td>${r.ComplaintId||''}</td><td>${r.Date||''}</td><td>${r.Subject||''}</td><td>${r.Status||''}</td><td>${r.Response||''}</td></tr>`).join('');
+      const rows = (d.complaints || []).slice().reverse();
+      const html = rows.map(r => `<tr><td>${r.ComplaintId||''}</td><td>${r.Date||''}</td><td>${r.Subject||''}</td><td>${r.Status||''}</td><td>${r.Response||''}</td></tr>`).join('');
       sectionBody.innerHTML = `<table class="tbl"><tr><th>ID</th><th>Date</th><th>Subject</th><th>Status</th><th>Response</th></tr>${html || '<tr><td colspan="5" class="muted">No complaints</td></tr>'}</table>`;
     } else if (key === 'bonus') {
-      const rows = d.bonus || [];
-      const html = rows.reverse().map(r => `<tr><td>${r.Date||''}</td><td>${r.Amount||''}</td><td>${r.Notes||''}</td></tr>`).join('');
+      const rows = (d.bonus || []).slice().reverse();
+      const html = rows.map(r => `<tr><td>${r.Date||''}</td><td>${r.Amount||''}</td><td>${r.Notes||''}</td></tr>`).join('');
       sectionBody.innerHTML = `<table class="tbl"><tr><th>Date</th><th>Amount</th><th>Notes</th></tr>${html || '<tr><td colspan="3" class="muted">No bonus</td></tr>'}</table>`;
     } else if (key === 'leaves') {
-      const rows = d.leaveRequests || [];
-      const html = rows.reverse().map(r => `<tr><td>${r.FromDate||''}</td><td>${r.ToDate||''}</td><td>${r.Type||''}</td><td>${r.Reason||''}</td><td>${r.Status||''}</td></tr>`).join('');
+      const rows = (d.leaveRequests || []).slice().reverse();
+      const html = rows.map(r => `<tr><td>${r.FromDate||''}</td><td>${r.ToDate||''}</td><td>${r.Type||''}</td><td>${r.Reason||''}</td><td>${r.Status||''}</td></tr>`).join('');
       sectionBody.innerHTML = `<table class="tbl"><tr><th>From</th><th>To</th><th>Type</th><th>Reason</th><th>Status</th></tr>${html || '<tr><td colspan="5" class="muted">No leave requests</td></tr>'}</table>`;
     }
   }
@@ -143,8 +214,23 @@
       .catch(e=>{ sectionBody.innerHTML='<div class="warn">'+(e.message||'Failed')+'</div>'; });
   }
 
+  // NEW: Complaint modal + submit
+  function showComplaintModal() {
+    const subject = prompt('Complaint Subject:'); if (!subject) return;
+    const description = prompt('Description (optional):') || '';
+    sectionBody.innerHTML = '<div class="muted">Submitting…</div>';
+    submitComplaint({ subject, description })
+      .then(res => {
+        sectionBody.innerHTML = '<div class="success">Complaint submitted. ID: ' + (res.complaintId || '-') + '</div>';
+        openSection('complaints');
+        init(); // refresh data
+      })
+      .catch(e => {
+        sectionBody.innerHTML = '<div class="warn">'+(e.message||'Failed')+'</div>';
+      });
+  }
 
-  
+  // ========= INIT =========
   async function init() {
     const name = localStorage.getItem('ep_name');
     if (name) document.getElementById('hello').textContent = 'Welcome, ' + name.toUpperCase();
@@ -153,6 +239,7 @@
       window.__DATA__ = d;
       const p = d.profile || {};
       document.getElementById('hello').textContent = 'Welcome, ' + (p.Name || '').toUpperCase();
+      if (p.Name) setName(p.Name);
       document.getElementById('photo').src = p.PhotoURL || 'https://via.placeholder.com/150?text=Photo';
 
       const details = `
