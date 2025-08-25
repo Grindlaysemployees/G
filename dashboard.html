@@ -61,7 +61,7 @@
             <button class="btn" onclick="openSection('salary')">Salary Slip</button>
             <button class="btn" onclick="openSection('documents')">Documents</button>
             <button class="btn" onclick="openSection('complaints')">Complaints Status</button>
-<button class="btn" onclick="window.location.href='COM.HTML'">Complaint Apply</button>
+            <button class="btn" onclick="showComplaintModal()">Complaint</button>
             <button class="btn" onclick="openSection('bonus')">Bonus</button>
             <button class="btn" onclick="openSection('leaves')">Leave Status</button>
             <button class="btn" onclick="showLeaveModal()">Leave Apply</button>
@@ -130,13 +130,13 @@
       const rows = d.leaveRequests || [];
       const html = rows.reverse().map(r => `<tr><td>${r.FromDate||''}</td><td>${r.ToDate||''}</td><td>${r.Type||''}</td><td>${r.Reason||''}</td><td>${r.Status||''}</td></tr>`).join('');
       sectionBody.innerHTML = `<table class="tbl"><tr><th>From</th><th>To</th><th>Type</th><th>Reason</th><th>Status</th></tr>${html || '<tr><td colspan="5" class="muted">No leave requests</td></tr>'}</table>`;
-
+    }
   }
 
   function showLeaveModal() {
     const fromDate = prompt('From date (YYYY-MM-DD):'); if (!fromDate) return;
     const toDate = prompt('To date (YYYY-MM-DD):'); if (!toDate) return;
-    const type = prompt('Type (Full/Half/SrtL):','Full'); const reason = prompt('Reason:') || '';
+    const type = prompt('Type (Full/Half/SL):','Full'); const reason = prompt('Reason:') || '';
     sectionBody.innerHTML = '<div class="muted">Submitting…</div>';
     applyLeave({ fromDate, toDate, type, reason })
       .then(()=>{ sectionBody.innerHTML='<div class="success">Leave request submitted.</div>'; openSection('leaves'); init(); })
@@ -144,8 +144,6 @@
   }
 
 
-
-    
   
   async function init() {
     const name = localStorage.getItem('ep_name');
