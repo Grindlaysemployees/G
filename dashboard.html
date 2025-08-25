@@ -132,109 +132,15 @@
     }
   }
 
-<!-- Leave Modal -->
-<div id="leaveModal" class="modal" style="display:none;">
-  <div class="modal-content">
-    <h3>Apply Leave</h3>
-    
-    <label>From Date:</label>
-    <input type="date" id="leaveFrom"><br><br>
-
-    <label>To Date:</label>
-    <input type="date" id="leaveTo"><br><br>
-
-    <label>Type:</label>
-    <select id="leaveType">
-      <option value="CL">CL</option>
-      <option value="PL">PL</option>
-      <option value="SL">SL</option>
-    </select><br><br>
-
-    <label>Reason:</label>
-    <textarea id="leaveReason"></textarea><br><br>
-
-    <button onclick="submitLeave()">Submit</button>
-    <button onclick="closeLeaveModal()">Cancel</button>
-  </div>
-</div>
-
-<style>
-.modal {
-  position: fixed; top: 0; left: 0; right:0; bottom:0;
-  background: rgba(0,0,0,0.5);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 9999;
-}
-.modal-content {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  width: 320px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-.modal-content h3 {
-  margin-top: 0;
-  text-align: center;
-}
-.modal-content input, .modal-content select, .modal-content textarea {
-  width: 100%;
-  padding: 6px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-.modal-content button {
-  margin-top: 10px;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.modal-content button:first-of-type {
-  background: #28a745;
-  color: #fff;
-}
-.modal-content button:last-of-type {
-  background: #dc3545;
-  color: #fff;
-  margin-left: 5px;
-}
-</style>
-
-<script>
-function showLeaveModal() {
-  document.getElementById("leaveModal").style.display = "flex";
-}
-
-function closeLeaveModal() {
-  document.getElementById("leaveModal").style.display = "none";
-}
-
-function submitLeave() {
-  const fromDate = document.getElementById("leaveFrom").value;
-  const toDate = document.getElementById("leaveTo").value;
-  const type = document.getElementById("leaveType").value;
-  const reason = document.getElementById("leaveReason").value;
-
-  if (!fromDate || !toDate) {
-    alert("Please select both dates");
-    return;
+  function showLeaveModal() {
+    const fromDate = prompt('From date (YYYY-MM-DD):'); if (!fromDate) return;
+    const toDate = prompt('To date (YYYY-MM-DD):'); if (!toDate) return;
+    const type = prompt('Type (CL/PL/SL):','CL'); const reason = prompt('Reason:') || '';
+    sectionBody.innerHTML = '<div class="muted">Submitting…</div>';
+    applyLeave({ fromDate, toDate, type, reason })
+      .then(()=>{ sectionBody.innerHTML='<div class="success">Leave request submitted.</div>'; openSection('leaves'); init(); })
+      .catch(e=>{ sectionBody.innerHTML='<div class="warn">'+(e.message||'Failed')+'</div>'; });
   }
-
-  sectionBody.innerHTML = '<div class="muted">Submitting…</div>';
-  applyLeave({ fromDate, toDate, type, reason })
-    .then(()=>{
-      sectionBody.innerHTML='<div class="success">Leave request submitted.</div>';
-      closeLeaveModal();
-      openSection('leaves'); init();
-    })
-    .catch(e=>{
-      sectionBody.innerHTML='<div class="warn">'+(e.message||'Failed')+'</div>';
-    });
-}
-</script>
-
-
   async function init() {
     const name = localStorage.getItem('ep_name');
     if (name) document.getElementById('hello').textContent = 'Welcome, ' + name.toUpperCase();
