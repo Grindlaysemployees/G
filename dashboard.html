@@ -111,7 +111,7 @@
         <tr><td>${r.Month||''}-${r.Year||''}</td><td>${r.Gross||''}</td><td>${r.Deductions||''}</td><td>${r.Net||''}</td>
         <td>${r.PDFUrl?`<a href="${r.PDFUrl}" target="_blank">View PDF</a>`:'-'}</td></tr>`).join('');
       sectionBody.innerHTML = `<table class="tbl">
-          <tr><th>Month</th><th>Gross</th><th>Deductions</th><th>Net</th><th>Slip</th></tr>${html || '<tr><td colspan="5" class="muted">No salary slips</td></tr>'}
+          <tr><th>Month</th><th>Slip</th></tr>${html || '<tr><td colspan="2" class="muted">No salary slips</td></tr>'}
         </table>`;
     } else if (key === 'documents') {
       const rows = d.documents || [];
