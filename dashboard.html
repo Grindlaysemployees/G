@@ -152,7 +152,7 @@
     const toDate = prompt('Against Person'); if (!Subject) return;
     const type = prompt('Status (Full/Half/SrtL):','Full'); const reason = prompt('Response:') || '';
     sectionBody.innerHTML = '<div class="muted">Submitting…</div>';
-    applyLeave({ Date, Subject, Status, Response })
+    applyComplaint({ Date, Subject, Status, Response })
       .then(()=>{ sectionBody.innerHTML='<div class="success">Complaint request submitted.</div>'; openSection('Complaint'); init(); })
       .catch(e=>{ sectionBody.innerHTML='<div class="warn">'+(e.message||'Failed')+'</div>'; });
   }
