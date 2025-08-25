@@ -61,6 +61,7 @@
             <button class="btn" onclick="openSection('salary')">Salary Slip</button>
             <button class="btn" onclick="openSection('documents')">Documents</button>
             <button class="btn" onclick="openSection('complaints')">Complain Status</button>
+            <button class="btn" onclick="showComplaintModal()">Complain</button>
             <button class="btn" onclick="openSection('bonus')">Bonus</button>
             <button class="btn" onclick="openSection('leaves')">Leave Status</button>
             <button class="btn" onclick="showLeaveModal()">Leave Apply</button>
@@ -135,12 +136,21 @@
   function showLeaveModal() {
     const fromDate = prompt('From date (YYYY-MM-DD):'); if (!fromDate) return;
     const toDate = prompt('To date (YYYY-MM-DD):'); if (!toDate) return;
-    const type = prompt('Type (CL/PL/SL):','CL'); const reason = prompt('Reason:') || '';
+    const type = prompt('Type (Full/Half/SL):','Full'); const reason = prompt('Reason:') || '';
     sectionBody.innerHTML = '<div class="muted">Submitting…</div>';
     applyLeave({ fromDate, toDate, type, reason })
       .then(()=>{ sectionBody.innerHTML='<div class="success">Leave request submitted.</div>'; openSection('leaves'); init(); })
       .catch(e=>{ sectionBody.innerHTML='<div class="warn">'+(e.message||'Failed')+'</div>'; });
   }
+
+
+
+
+
+
+
+
+  
   async function init() {
     const name = localStorage.getItem('ep_name');
     if (name) document.getElementById('hello').textContent = 'Welcome, ' + name.toUpperCase();
