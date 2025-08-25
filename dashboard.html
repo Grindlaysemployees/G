@@ -149,7 +149,7 @@
 
     function showComplaintModal() {
     const fromDate = prompt('From date (YYYY-MM-DD):'); if (!Date) return;
-    const toDate = prompt('To date (YYYY-MM-DD):'); if (!Subject) return;
+    const toDate = prompt('Against Person'); if (!Subject) return;
     const type = prompt('Status (Full/Half/SrtL):','Full'); const reason = prompt('Response:') || '';
     sectionBody.innerHTML = '<div class="muted">Submitting…</div>';
     applyLeave({ Date, Subject, Status, Response })
