@@ -107,13 +107,7 @@
         </table>`;
     } else if (key === 'salary') {
       const rows = d.salarySlips || [];
-      const html = rows.reverse().map(r => {
-            let formatted = '';
-    if (r.Month && r.Year) {
-      const date = new Date(`${r.Year}-${r.Month}-01`);
-      formatted = date.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
-    }
-      return `
+      const html = rows.reverse().map(r =>  `
         <tr><td>${r.Month||''}-${r.Year||''}</td><td>${r.Gross||''}</td><td>${r.Deductions||''}</td><td>${r.Net||''}</td>
         <td>${r.PDFUrl?`<a href="${r.PDFUrl}" target="_blank">View PDF</a>`:'-'}</td></tr>`).join('');
       sectionBody.innerHTML = `<table class="tbl">
