@@ -99,7 +99,7 @@
         </table>`;
     } else if (key === 'attendance') {
       const rows = d.attendance || [];
-      const html = rows.slice(-30).reverse().map(r => `
+      const html = rows.slice(-32).reverse().map(r => `
         <tr><td>${r.Date||''}</td><td>${r.InTime||''}</td><td>${r.OutTime||''}</td><td>${r.Status||''}</td><td>${r.Remarks||''}</td></tr>
       `).join('');
       sectionBody.innerHTML = `<table class="tbl">
