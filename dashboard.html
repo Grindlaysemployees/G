@@ -136,7 +136,7 @@
   function showLeaveModal() {
     const fromDate = prompt('From date (YYYY-MM-DD):'); if (!fromDate) return;
     const toDate = prompt('To date (YYYY-MM-DD):'); if (!toDate) return;
-    const type = prompt('Type (Full/Half/SL):','Full'); const reason = prompt('Reason:') || '';
+    const type = prompt('Type (Full/Half/SrtL):','Full'); const reason = prompt('Reason:') || '';
     sectionBody.innerHTML = '<div class="muted">Submitting…</div>';
     applyLeave({ fromDate, toDate, type, reason })
       .then(()=>{ sectionBody.innerHTML='<div class="success">Leave request submitted.</div>'; openSection('leaves'); init(); })
