@@ -143,35 +143,6 @@
       .catch(e=>{ sectionBody.innerHTML='<div class="warn">'+(e.message||'Failed')+'</div>'; });
   }
 
-function showComplaintModal() {
-  const subject = prompt('Complaint Subject:'); 
-  if (!subject) return;
-
-  const description = prompt('Complaint Description:') || '';
-  const date = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-  const empId = window.__DATA__?.profile?.EmpID || 'UNKNOWN';
-
-  sectionBody.innerHTML = '<div class="muted">Submitting…</div>';
-
-  submitComplaint({ empId, subject, description, date })
-    .then(() => {
-      sectionBody.innerHTML = '<div class="success">Complaint submitted successfully.</div>';
-      openSection('complaints'); 
-      init();
-    })
-    .catch(e => {
-      sectionBody.innerHTML = '<div class="warn">'+(e.message || 'Failed')+'</div>';
-    });
-}
-
-
-
-
-  
-
-
-
-
 
   
   async function init() {
