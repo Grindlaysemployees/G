@@ -143,15 +143,6 @@
       .catch(e=>{ sectionBody.innerHTML='<div class="warn">'+(e.message||'Failed')+'</div>'; });
   }
 
-function openComplaintForm() {
-  fetch("COM.HTML")
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById("main-content").innerHTML = html;
-    })
-    .catch(err => console.error("Error loading complaint form:", err));
-}
-
 
 
     
