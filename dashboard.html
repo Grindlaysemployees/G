@@ -120,8 +120,8 @@
       sectionBody.innerHTML = `<table class="tbl"><tr><th>Type</th><th>Name</th><th>Link</th></tr>${html || '<tr><td colspan="3" class="muted">No documents</td></tr>'}</table>`;
     } else if (key === 'complaints') {
       const rows = d.complaints || [];
-      const html = rows.reverse().map(r => `<tr><td>${r.ComplaintId||''}</td><td>${r.Date||''}</td><td>${r.Subject||''}</td><td>${r.Status||''}</td><td>${r.Response||''}</td></tr>`).join('');
-      sectionBody.innerHTML = `<table class="tbl"><tr><th>ID</th><th>Date</th><th>Subject</th><th>Status</th><th>Response</th></tr>${html || '<tr><td colspan="5" class="muted">No complaints</td></tr>'}</table>`;
+      const html = rows.reverse().map(r => `<tr><td>${r.Date||''}</td><td>${r.Subject||''}</td><td>${r.Description||''}</td><td>${r.Status||''}</td><td>${r.Response||''}</td></tr>`).join('');
+      sectionBody.innerHTML = `<table class="tbl"><tr><th>Date</th><th>Against</th><th>Complanit</th><th>Status</th><th>Response</th></tr>${html || '<tr><td colspan="5" class="muted">No complaints</td></tr>'}</table>`;
     } else if (key === 'bonus') {
       const rows = d.bonus || [];
       const html = rows.reverse().map(r => `<tr><td>${r.Date||''}</td><td>${r.Amount||''}</td><td>${r.Notes||''}</td></tr>`).join('');
